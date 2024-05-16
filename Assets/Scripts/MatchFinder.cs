@@ -20,7 +20,7 @@ public class MatchFinder
             for (int y = 0; y < board.Height; y++)
             {
                 Gem currentGem = board.AllGems[x, y];
-                if (currentGem != null && currentGem.Type != GemType.stone)
+                if (currentGem != null && currentGem.Type != GemType.Stone)
                 {
                     if (x > 0 && x < board.Width - 1)
                     {
@@ -55,7 +55,8 @@ public class MatchFinder
             }
         }
 
-        CheckForBombs();
+        if (currentMatches.Count > 0)
+            CheckForBombs();
 
         return currentMatches;
     }
@@ -73,7 +74,7 @@ public class MatchFinder
             {
                 if (board.AllGems[x - 1, y] != null)
                 {
-                    if (board.AllGems[x - 1, y].Type == GemType.bomb)
+                    if (board.AllGems[x - 1, y].Type == GemType.Bomb)
                     {
                         MarkBombArea(new Vector2Int(x - 1, y), (Bomb)board.AllGems[x - 1, y]);
                     }
@@ -84,7 +85,7 @@ public class MatchFinder
             {
                 if (board.AllGems[x + 1, y] != null)
                 {
-                    if (board.AllGems[x + 1, y].Type == GemType.bomb)
+                    if (board.AllGems[x + 1, y].Type == GemType.Bomb)
                     {
                         MarkBombArea(new Vector2Int(x + 1, y), (Bomb)board.AllGems[x + 1, y]);
                     }
@@ -95,7 +96,7 @@ public class MatchFinder
             {
                 if (board.AllGems[x, y - 1] != null)
                 {
-                    if (board.AllGems[x, y - 1].Type == GemType.bomb)
+                    if (board.AllGems[x, y - 1].Type == GemType.Bomb)
                     {
                         MarkBombArea(new Vector2Int(x, y - 1), (Bomb)board.AllGems[x, y - 1]);
                     }
@@ -106,7 +107,7 @@ public class MatchFinder
             {
                 if (board.AllGems[x, y + 1] != null)
                 {
-                    if (board.AllGems[x, y + 1].Type == GemType.bomb)
+                    if (board.AllGems[x, y + 1].Type == GemType.Bomb)
                     {
                         MarkBombArea(new Vector2Int(x, y + 1), (Bomb)board.AllGems[x, y + 1]);
                     }

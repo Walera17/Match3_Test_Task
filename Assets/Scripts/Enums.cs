@@ -1,16 +1,16 @@
 public enum GemType
 {
-    blue,
-    green,
-    red,
-    yellow,
-    purple,
-    bomb,
-    stone
+    Blue,
+    Green,
+    Red,
+    Yellow,
+    Purple,
+    Bomb,
+    Stone
 }
 
 public enum BoardState
 {
-    wait, 
-    move
+    Wait, 
+    Move
 }

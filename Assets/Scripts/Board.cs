@@ -15,7 +15,7 @@ public class Board : MonoBehaviour
     [SerializeField] private int maxIterations;
 
     private Gem[,] allGems;
-    private BoardState currentState = BoardState.move;
+    private BoardState currentState = BoardState.Move;
     private Gem otherGem;
     private Vector2Int posIndex;
     private Vector2Int previousPos;
@@ -141,7 +141,7 @@ public class Board : MonoBehaviour
 
     private IEnumerator CheckMoveCo(Gem selectGem)
     {
-        SetState(BoardState.wait);
+        SetState(BoardState.Wait);
 
         yield return new WaitForSeconds(.5f);
 
@@ -159,7 +159,7 @@ public class Board : MonoBehaviour
 
                 yield return new WaitForSeconds(.5f);
 
-                SetState(BoardState.move);
+                SetState(BoardState.Move);
             }
             else
             {
@@ -182,7 +182,7 @@ public class Board : MonoBehaviour
     {
         if (allGems[pos.x, pos.y] != null)
         {
-            if (allGems[pos.x, pos.y].Type == GemType.bomb) countBomb--;
+            if (allGems[pos.x, pos.y].Type == GemType.Bomb) countBomb--;
             Destroy(allGems[pos.x, pos.y].gameObject);
             allGems[pos.x, pos.y] = null;
         }
@@ -249,7 +249,7 @@ public class Board : MonoBehaviour
         else
         {
             yield return new WaitForSeconds(.5f);
-            currentState = BoardState.move;
+            currentState = BoardState.Move;
         }
     }
 

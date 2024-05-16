@@ -29,7 +29,7 @@ public class InputController : MonoBehaviour
         {
             mousePressed = false;
 
-            if (board.CurrentState == BoardState.move)// && board.roundMan.roundTime > 0)
+            if (board.CurrentState == BoardState.Move)// && board.roundMan.roundTime > 0)
             {
                 Vector2 finalTouchPosition = cam.ScreenToWorldPoint(Input.mousePosition);
                 if ((finalTouchPosition - firstTouchPosition).sqrMagnitude > .25f)
