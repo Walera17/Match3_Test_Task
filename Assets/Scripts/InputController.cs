@@ -29,7 +29,7 @@ public class InputController : MonoBehaviour
         {
             mousePressed = false;
 
-            if (board.CurrentState == BoardState.Move)// && board.roundMan.roundTime > 0)
+            if (board.CurrentState == BoardState.Move)
             {
                 Vector2 finalTouchPosition = cam.ScreenToWorldPoint(Input.mousePosition);
                 if ((finalTouchPosition - firstTouchPosition).sqrMagnitude > .25f)
@@ -40,10 +40,14 @@ public class InputController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Вычислить угол
+    /// </summary>
+    /// <param name="finalTouchPosition"></param>
     private void CalculateAngle(Vector2 finalTouchPosition)
     {
         float swipeAngle = Mathf.Atan2(finalTouchPosition.y - firstTouchPosition.y, finalTouchPosition.x - firstTouchPosition.x);
-        swipeAngle = swipeAngle * 180 / Mathf.PI;
+        swipeAngle = swipeAngle * 180 / Mathf.PI;                                                                                   // Угол наклона
 
         board.MovePieces(swipeAngle, selectGem);
     }

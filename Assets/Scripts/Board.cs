@@ -9,10 +9,11 @@ public class Board : MonoBehaviour
     [SerializeField] private GameObject bgTilePrefab;
     [SerializeField] private Gem[] gems;
     [SerializeField] private Gem bomb;
-    [SerializeField] private float bombChance = 2f;
-    [SerializeField] private int maxBomb = 1;
-    [SerializeField] private float gemSpeed;
-    [SerializeField] private int maxIterations;
+    [SerializeField, Tooltip("¬еро€тность создани€ бомбы")] private float bombChance = 2f;
+    [SerializeField, Tooltip("ћаксимальное количество бомб на доске")] private int maxBomb = 1;
+    [SerializeField, Tooltip("—корость перемещени€ кристаллов")] private float gemSpeed;
+    [SerializeField, Tooltip("ќграничение итераций \"проверки совпадени€ при старте игры\" при генерации кристаллов")] private int maxIterations;
+    [Header("Test Mode"), SerializeField, Tooltip("ѕоказать все совпадени€(только дл€ режима тестировани€, в игре не нужно)")] private bool isSelectMatches; 
 
     private Gem[,] allGems;
     private BoardState currentState = BoardState.Move;
@@ -47,12 +48,17 @@ public class Board : MonoBehaviour
                 GameObject bgTile = Instantiate(bgTilePrefab, new Vector3(x, y, 0), Quaternion.identity, transform);
                 bgTile.name = "BG Tile - " + x + ", " + y;
 
-                GenerateStartGems(x, y);
+                GenerateStartGem(x, y);
             }
         }
     }
 
-    private void GenerateStartGems(int x, int y)
+    /// <summary>
+    /// √енераци€ кристалла при старте
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    private void GenerateStartGem(int x, int y)
     {
         int gemToUse = Random.Range(0, gems.Length);
 
@@ -67,6 +73,12 @@ public class Board : MonoBehaviour
         SpawnGem(posIndex, gems[gemToUse], false);
     }
 
+    /// <summary>
+    /// —оздание кристалла в заданной позиции
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="gemToSpawn"></param>
+    /// <param name="createBomb"></param>
     private void SpawnGem(Vector2Int pos, Gem gemToSpawn, bool createBomb = true)
     {
         if (createBomb && Random.Range(0f, 100f) < bombChance && countBomb < maxBomb)
@@ -81,12 +93,17 @@ public class Board : MonoBehaviour
         SetupGem(pos, gem);
     }
 
+    /// <summary>
+    /// ѕроверка на совпадени€(чтобы при старте не было сразу совпадений)
+    /// </summary>
+    /// <param name="posToCheck">позици€</param>
+    /// <param name="gemToCheck">кристалл</param>
+    /// <returns></returns>
     bool MatchesAt(Vector2Int posToCheck, Gem gemToCheck)
     {
         if (posToCheck.x > 1)
         {
-            if (allGems[posToCheck.x - 1, posToCheck.y].Type == gemToCheck.Type &&
-                allGems[posToCheck.x - 2, posToCheck.y].Type == gemToCheck.Type)
+            if (allGems[posToCheck.x - 1, posToCheck.y].Type == gemToCheck.Type && allGems[posToCheck.x - 2, posToCheck.y].Type == gemToCheck.Type)
             {
                 return true;
             }
@@ -94,8 +111,7 @@ public class Board : MonoBehaviour
 
         if (posToCheck.y > 1)
         {
-            if (allGems[posToCheck.x, posToCheck.y - 1].Type == gemToCheck.Type &&
-                allGems[posToCheck.x, posToCheck.y - 2].Type == gemToCheck.Type)
+            if (allGems[posToCheck.x, posToCheck.y - 1].Type == gemToCheck.Type && allGems[posToCheck.x, posToCheck.y - 2].Type == gemToCheck.Type)
             {
                 return true;
             }
@@ -104,6 +120,11 @@ public class Board : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// ѕеремещение фигур(выбранный кристалл и кристалл-цель)
+    /// </summary>
+    /// <param name="swipeAngle">”гол наклона</param>
+    /// <param name="selectGem">¬ыбранный кристалл</param>
     public void MovePieces(float swipeAngle, Gem selectGem)
     {
         previousPos = posIndex = selectGem.posIndex;
@@ -136,16 +157,21 @@ public class Board : MonoBehaviour
         SetupGem(posIndex, selectGem);
         SetupGem(otherGem.posIndex, otherGem);
 
-        StartCoroutine(CheckMoveCo(selectGem));
+        StartCoroutine(CheckMove(selectGem));
     }
 
-    private IEnumerator CheckMoveCo(Gem selectGem)
+    /// <summary>
+    /// ѕроверить перемещение кристаллов
+    /// </summary>
+    /// <param name="selectGem">¬ыбранный кристалл</param>
+    /// <returns></returns>
+    private IEnumerator CheckMove(Gem selectGem)
     {
         SetState(BoardState.Wait);
 
         yield return new WaitForSeconds(.5f);
 
-        List<Gem> allMatches = matchFinder.FindAllMatches();
+        List<Gem> allMatches = matchFinder.FindAllMatchesAndCheckForBombs();
 
         if (otherGem != null)
         {
@@ -163,14 +189,22 @@ public class Board : MonoBehaviour
             }
             else
             {
-                SelectMatches(allMatches);
-                yield return new WaitForSeconds(3f);
-                DestroyMatches(allMatches);
+                if (isSelectMatches)
+                {
+                    SelectAllMatches(allMatches);
+                    yield return new WaitForSeconds(3f);
+                }
+
+                DestroyAllMatches(allMatches);
             }
         }
     }
 
-    private void SelectMatches(List<Gem> allMatches)
+    /// <summary>
+    /// ѕредварительно(перед уничтожением) показать все совпадени€(только дл€ режима тестировани€, в игре не нужно)
+    /// </summary>
+    /// <param name="allMatches">все совпадени€</param>
+    private void SelectAllMatches(List<Gem> allMatches)
     {
         foreach (Gem gem in allMatches)
         {
@@ -178,17 +212,11 @@ public class Board : MonoBehaviour
         }
     }
 
-    private void DestroyMatchedGemAt(Vector2Int pos)
-    {
-        if (allGems[pos.x, pos.y] != null)
-        {
-            if (allGems[pos.x, pos.y].Type == GemType.Bomb) countBomb--;
-            Destroy(allGems[pos.x, pos.y].gameObject);
-            allGems[pos.x, pos.y] = null;
-        }
-    }
-
-    private void DestroyMatches(List<Gem> allMatches)
+    /// <summary>
+    /// ”ничтожить все совпадени€
+    /// </summary>
+    /// <param name="allMatches">все совпадени€</param>
+    private void DestroyAllMatches(List<Gem> allMatches)
     {
         for (int i = 0; i < allMatches.Count; i++)
         {
@@ -199,6 +227,24 @@ public class Board : MonoBehaviour
         }
 
         StartCoroutine(DecreaseRowCo());
+    }
+
+    /// <summary>
+    /// ”ничтожьте кристалл в заданной позиции
+    /// </summary>
+    /// <param name="pos"></param>
+    private void DestroyMatchedGemAt(Vector2Int pos)
+    {
+        if (allGems[pos.x, pos.y] != null)
+        {
+            if (allGems[pos.x, pos.y].Type == GemType.Bomb)
+            {
+                countBomb--;
+            }
+
+            Destroy(allGems[pos.x, pos.y].gameObject);
+            allGems[pos.x, pos.y] = null;
+        }
     }
 
     private IEnumerator DecreaseRowCo()
@@ -218,7 +264,7 @@ public class Board : MonoBehaviour
                 else if (nullCounter > 0)
                 {
                     allGems[x, y].posIndex.y -= nullCounter;
-                    allGems[x, y].SetupMovePosition(allGems[x, y].posIndex);
+                    allGems[x, y].SetupMovePosition(allGems[x, y].posIndex);            // запускаем движение кристалла
                     allGems[x, y - nullCounter] = allGems[x, y];
                     allGems[x, y] = null;
                 }
@@ -237,14 +283,19 @@ public class Board : MonoBehaviour
 
         yield return new WaitForSeconds(.5f);
 
-        List<Gem> allMatches = matchFinder.FindAllMatches();
+        List<Gem> allMatches = matchFinder.FindAllMatchesAndCheckForBombs();
 
         if (allMatches.Count > 0)
         {
             yield return new WaitForSeconds(.5f);
-            SelectMatches(allMatches);
-            yield return new WaitForSeconds(3f);
-            DestroyMatches(allMatches);
+
+            if (isSelectMatches)
+            {
+                SelectAllMatches(allMatches);
+                yield return new WaitForSeconds(3f);
+            }
+
+            DestroyAllMatches(allMatches);
         }
         else
         {
@@ -268,6 +319,12 @@ public class Board : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// Ќастройка кристалла и задание позиции перемещени€
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="gem"></param>
     private void SetupGem(Vector2Int pos, Gem gem)
     {
         allGems[pos.x, pos.y] = gem;

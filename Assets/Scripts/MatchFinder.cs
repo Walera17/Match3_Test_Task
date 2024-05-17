@@ -11,10 +11,27 @@ public class MatchFinder
         this.board = board;
     }
 
-    public List<Gem> FindAllMatches()
+    /// <summary>
+    /// Найдите все совпадения и при наличие бомб(добавить области поражения)
+    /// </summary>
+    /// <returns></returns>
+    public List<Gem> FindAllMatchesAndCheckForBombs()
     {
         currentMatches.Clear();
 
+        FindAllMatches();
+
+        if (currentMatches.Count > 0)
+            CheckForBombs();
+
+        return currentMatches;
+    }
+
+    /// <summary>
+    /// Найдите все совпадения
+    /// </summary>
+    private void FindAllMatches()
+    {
         for (int x = 0; x < board.Width; x++)
         {
             for (int y = 0; y < board.Height; y++)
@@ -54,13 +71,11 @@ public class MatchFinder
                 }
             }
         }
-
-        if (currentMatches.Count > 0)
-            CheckForBombs();
-
-        return currentMatches;
     }
 
+    /// <summary>
+    /// Проверьте наличие бомб
+    /// </summary>
     private void CheckForBombs()
     {
         for (int i = 0; i < currentMatches.Count; i++)
@@ -116,11 +131,16 @@ public class MatchFinder
         }
     }
 
+    /// <summary>
+    /// Отметьте область бомбы
+    /// </summary>
+    /// <param name="bombPos"></param>
+    /// <param name="theBomb"></param>
     private void MarkBombArea(Vector2Int bombPos, Bomb theBomb)
     {
-        for (int x = bombPos.x - theBomb.blastSize; x <= bombPos.x + theBomb.blastSize; x++)
+        for (int x = bombPos.x - theBomb.BlastSize; x <= bombPos.x + theBomb.BlastSize; x++)
         {
-            for (int y = bombPos.y - theBomb.blastSize; y <= bombPos.y + theBomb.blastSize; y++)
+            for (int y = bombPos.y - theBomb.BlastSize; y <= bombPos.y + theBomb.BlastSize; y++)
             {
                 if (x >= 0 && x < board.Width && y >= 0 && y < board.Height)
                 {

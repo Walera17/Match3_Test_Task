@@ -299,12 +299,12 @@ MonoBehaviour:
   - {fileID: 1541757820574310421, guid: ed7b738b21062234b9892ef7a9ec2c7a, type: 3}
   - {fileID: 1541757820574310421, guid: 5929bd4d2fe30a44e9d7ca92fd7df738, type: 3}
   - {fileID: 1541757820574310421, guid: 5227ec4e99c3e6f45bb6d3e7275be550, type: 3}
-  bomb: {fileID: 6701918864094016902, guid: 6253d4ddd07e51e4cb0795ec004b10c4, type: 3}
+  bomb: {fileID: 6862615652554460612, guid: 6253d4ddd07e51e4cb0795ec004b10c4, type: 3}
   bombChance: 10
   maxBomb: 2
   gemSpeed: 8
   maxIterations: 100
-  bonusAmount: 0.5
+  isSelectMatches: 0
 --- !u!4 &523613908
 Transform:
   m_ObjectHideFlags: 0

@@ -3,10 +3,10 @@ using UnityEngine.Events;
 
 public class Gem : MonoBehaviour
 {
-    public static event UnityAction<Gem> OnClick;
+    public static event UnityAction<Gem> OnClick;                           // событие при клике на любом кристалле(передает параметром текущий кристалл)
 
-    [SerializeField] private GemType type;
-    [SerializeField] private int scoreValue = 10;
+    [SerializeField] protected GemType type;
+    [SerializeField] protected int scoreValue = 10;
 
     [HideInInspector] public Vector2Int posIndex;
 
@@ -27,6 +27,10 @@ public class Gem : MonoBehaviour
         OnClick?.Invoke(this);
     }
 
+    /// <summary>
+    /// Настройка положения перемещения и запуск движения
+    /// </summary>
+    /// <param name="pos"></param>
     public void SetupMovePosition(Vector2Int pos)
     {
         posIndex = pos;

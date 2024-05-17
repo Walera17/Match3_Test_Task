@@ -1,4 +1,8 @@
-public class Bomb: Gem
+using UnityEngine;
+
+public class Bomb : Gem 
 {
-    public int blastSize = 2;
+    [SerializeField] private int blastSize = 2;
+
+    public int BlastSize => blastSize;
 }
