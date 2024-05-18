@@ -334,6 +334,50 @@ public class Board : MonoBehaviour
     }
 
     /// <summary>
+    ///  Перетасовка доски
+    /// </summary>
+    public void ShuffleBoard()
+    {
+        if (currentState != BoardState.Wait)
+        {
+            currentState = BoardState.Wait;
+
+            List<Gem> gemsFromBoard = new List<Gem>();
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    gemsFromBoard.Add(allGems[x, y]);
+                    allGems[x, y] = null;
+                }
+            }
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    int gemToUse = Random.Range(0, gemsFromBoard.Count);
+
+                    int iterations = 0;
+                    posIndex = new Vector2Int(x, y);
+                    while (MatchesAt(posIndex, gemsFromBoard[gemToUse]) && iterations < 100 && gemsFromBoard.Count > 1)
+                    {
+                        gemToUse = Random.Range(0, gemsFromBoard.Count);
+                        iterations++;
+                    }
+
+                    SetupGem(posIndex, gemsFromBoard[gemToUse]);
+                    allGems[x, y] = gemsFromBoard[gemToUse];
+                    gemsFromBoard.RemoveAt(gemToUse);
+                }
+            }
+
+            StartCoroutine(FillBoard());
+        }
+    }
+
+    /// <summary>
     /// Настройка кристалла и задание позиции перемещения
     /// </summary>
     /// <param name="pos"></param>
