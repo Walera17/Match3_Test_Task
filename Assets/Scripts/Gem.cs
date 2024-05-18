@@ -1,10 +1,12 @@
-using UnityEngine;
+п»їusing UnityEngine;
 using UnityEngine.Events;
 
 public class Gem : MonoBehaviour
 {
-    public static event UnityAction<Gem> OnClick;                           // событие при клике на любом кристалле(передает параметром текущий кристалл)
+    public static event UnityAction<Gem> OnClick;                           // СЃРѕР±С‹С‚РёРµ РїСЂРё РєР»РёРєРµ РЅР° Р»СЋР±РѕРј РєСЂРёСЃС‚Р°Р»Р»Рµ(РїРµСЂРµРґР°РµС‚ РїР°СЂР°РјРµС‚СЂРѕРј С‚РµРєСѓС‰РёР№ РєСЂРёСЃС‚Р°Р»Р»)
 
+    [SerializeField] protected SpriteRenderer gemSprite;
+    [SerializeField] private ParticleController particleController;
     [SerializeField] protected GemType type;
     [SerializeField] protected int scoreValue = 10;
 
@@ -15,7 +17,12 @@ public class Gem : MonoBehaviour
     public int ScoreValue => scoreValue;
 
     private bool isMove;
-    
+
+    private void OnEnable()
+    {
+        gemSprite.enabled = true;
+    }
+
     void Update()
     {
         if (isMove)
@@ -28,13 +35,18 @@ public class Gem : MonoBehaviour
     }
 
     /// <summary>
-    /// Настройка положения перемещения и запуск движения
+    /// РќР°СЃС‚СЂРѕР№РєР° РїРѕР»РѕР¶РµРЅРёСЏ РїРµСЂРµРјРµС‰РµРЅРёСЏ Рё Р·Р°РїСѓСЃРє РґРІРёР¶РµРЅРёСЏ
     /// </summary>
     /// <param name="pos"></param>
     public void SetupMovePosition(Vector2Int pos)
     {
         posIndex = pos;
         isMove = true;
+    }
+
+    private void DisableView()
+    {
+        gemSprite.enabled = false;
     }
 
     private void Move()
@@ -48,5 +60,11 @@ public class Gem : MonoBehaviour
             transform.position = new Vector3(posIndex.x, posIndex.y, 0f);
             isMove = false;
         }
+    }
+        
+    public void RemoveGem()
+    {
+        DisableView();
+        particleController.CreateBurst();
     }
 }

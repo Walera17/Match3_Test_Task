@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+п»їusing System.Collections.Generic;
 using UnityEngine;
 
 public class MatchFinder
@@ -12,7 +12,7 @@ public class MatchFinder
     }
 
     /// <summary>
-    /// Найдите все совпадения и при наличие бомб(добавить области поражения)
+    /// РќР°Р№РґРёС‚Рµ РІСЃРµ СЃРѕРІРїР°РґРµРЅРёСЏ Рё РїСЂРё РЅР°Р»РёС‡РёРµ Р±РѕРјР±(РґРѕР±Р°РІРёС‚СЊ РѕР±Р»Р°СЃС‚Рё РїРѕСЂР°Р¶РµРЅРёСЏ)
     /// </summary>
     /// <returns></returns>
     public List<Gem> FindAllMatchesAndCheckForBombs()
@@ -28,7 +28,7 @@ public class MatchFinder
     }
 
     /// <summary>
-    /// Найдите все совпадения
+    /// РќР°Р№РґРёС‚Рµ РІСЃРµ СЃРѕРІРїР°РґРµРЅРёСЏ
     /// </summary>
     private void FindAllMatches()
     {
@@ -74,7 +74,7 @@ public class MatchFinder
     }
 
     /// <summary>
-    /// Проверьте наличие бомб
+    /// РџСЂРѕРІРµСЂСЊС‚Рµ РЅР°Р»РёС‡РёРµ Р±РѕРјР±
     /// </summary>
     private void CheckForBombs()
     {
@@ -132,7 +132,7 @@ public class MatchFinder
     }
 
     /// <summary>
-    /// Отметьте область бомбы
+    /// РћС‚РјРµС‚СЊС‚Рµ РѕР±Р»Р°СЃС‚СЊ Р±РѕРјР±С‹
     /// </summary>
     /// <param name="bombPos"></param>
     /// <param name="theBomb"></param>

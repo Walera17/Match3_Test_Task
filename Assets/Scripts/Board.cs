@@ -1,4 +1,4 @@
-using System.Collections;
+п»їusing System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,21 +8,21 @@ public class Board : MonoBehaviour
     [SerializeField] private int height;
     [SerializeField] private GameObject bgTilePrefab;
     [SerializeField] private Gem[] gems;
-    [SerializeField] private Gem bomb;
-    [SerializeField, Tooltip("Вероятность создания бомбы")] private float bombChance = 2f;
-    [SerializeField, Tooltip("Максимальное количество бомб на доске")] private int maxBomb = 1;
-    [SerializeField, Tooltip("Скорость перемещения кристаллов")] private float gemSpeed;
-    [SerializeField, Tooltip("Ограничение итераций \"проверки совпадения при старте игры\" при генерации кристаллов")] private int maxIterations;
-    [Header("Test Mode"), SerializeField, Tooltip("Показать все совпадения(только для режима тестирования, в игре не нужно)")] private bool isSelectMatches; 
+    [SerializeField, Tooltip("РЎРєРѕСЂРѕСЃС‚СЊ РїРµСЂРµРјРµС‰РµРЅРёСЏ РєСЂРёСЃС‚Р°Р»Р»РѕРІ")] private float gemSpeed;
+    [Header("Bomb"), SerializeField] private Gem bomb;
+    [SerializeField, Tooltip("Р’РµСЂРѕСЏС‚РЅРѕСЃС‚СЊ СЃРѕР·РґР°РЅРёСЏ Р±РѕРјР±С‹")] private int bombChance = 10;
+    [SerializeField, Tooltip("РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ Р±РѕРјР± РЅР° РґРѕСЃРєРµ")] private int maxBomb = 1;
+    [Header("Test Mode"), SerializeField, Tooltip("РџРѕРєР°Р·Р°С‚СЊ РІСЃРµ СЃРѕРІРїР°РґРµРЅРёСЏ(С‚РѕР»СЊРєРѕ РґР»СЏ СЂРµР¶РёРјР° С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ, РІ РёРіСЂРµ РЅРµ РЅСѓР¶РЅРѕ)")] private bool isSelectMatches;
 
     private Gem[,] allGems;
-    private BoardState currentState = BoardState.Move;
+    private BoardState currentState;
     private Gem otherGem;
     private Vector2Int posIndex;
     private Vector2Int previousPos;
     private MatchFinder matchFinder;
     private int countBomb;
-
+    private WaitForSeconds operationDelay;
+    private WaitForSeconds smallDelay;
     public static float SpeedGem;
 
     public int Width => width;
@@ -32,6 +32,9 @@ public class Board : MonoBehaviour
 
     void Start()
     {
+        currentState = BoardState.Move;
+        operationDelay = new WaitForSeconds(.5f);
+        smallDelay = new WaitForSeconds(.2f);
         matchFinder = new MatchFinder(this);
         SpeedGem = gemSpeed;
         allGems = new Gem[width, height];
@@ -54,7 +57,7 @@ public class Board : MonoBehaviour
     }
 
     /// <summary>
-    /// Генерация кристалла при старте
+    /// Р“РµРЅРµСЂР°С†РёСЏ РєСЂРёСЃС‚Р°Р»Р»Р° РїСЂРё СЃС‚Р°СЂС‚Рµ
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
@@ -64,7 +67,7 @@ public class Board : MonoBehaviour
 
         int iterations = 0;
         posIndex = new Vector2Int(x, y);
-        while (MatchesAt(posIndex, gems[gemToUse]) && iterations < maxIterations)
+        while (MatchesAt(posIndex, gems[gemToUse]) && iterations < 100)
         {
             gemToUse = Random.Range(0, gems.Length);
             iterations++;
@@ -74,14 +77,14 @@ public class Board : MonoBehaviour
     }
 
     /// <summary>
-    /// Создание кристалла в заданной позиции
+    /// РЎРѕР·РґР°РЅРёРµ РєСЂРёСЃС‚Р°Р»Р»Р° РІ Р·Р°РґР°РЅРЅРѕР№ РїРѕР·РёС†РёРё
     /// </summary>
     /// <param name="pos"></param>
     /// <param name="gemToSpawn"></param>
     /// <param name="createBomb"></param>
     private void SpawnGem(Vector2Int pos, Gem gemToSpawn, bool createBomb = true)
     {
-        if (createBomb && Random.Range(0f, 100f) < bombChance && countBomb < maxBomb)
+        if (createBomb && Random.Range(0, 100) < bombChance && countBomb < maxBomb)
         {
             gemToSpawn = bomb;
             countBomb++;
@@ -94,10 +97,10 @@ public class Board : MonoBehaviour
     }
 
     /// <summary>
-    /// Проверка на совпадения(чтобы при старте не было сразу совпадений)
+    /// РџСЂРѕРІРµСЂРєР° РЅР° СЃРѕРІРїР°РґРµРЅРёСЏ(С‡С‚РѕР±С‹ РїСЂРё СЃС‚Р°СЂС‚Рµ РЅРµ Р±С‹Р»Рѕ СЃСЂР°Р·Сѓ СЃРѕРІРїР°РґРµРЅРёР№)
     /// </summary>
-    /// <param name="posToCheck">позиция</param>
-    /// <param name="gemToCheck">кристалл</param>
+    /// <param name="posToCheck">РїРѕР·РёС†РёСЏ</param>
+    /// <param name="gemToCheck">РєСЂРёСЃС‚Р°Р»Р»</param>
     /// <returns></returns>
     bool MatchesAt(Vector2Int posToCheck, Gem gemToCheck)
     {
@@ -121,10 +124,10 @@ public class Board : MonoBehaviour
     }
 
     /// <summary>
-    /// Перемещение фигур(выбранный кристалл и кристалл-цель)
+    /// РџРµСЂРµРјРµС‰РµРЅРёРµ С„РёРіСѓСЂ(РІС‹Р±СЂР°РЅРЅС‹Р№ РєСЂРёСЃС‚Р°Р»Р» Рё РєСЂРёСЃС‚Р°Р»Р»-С†РµР»СЊ)
     /// </summary>
-    /// <param name="swipeAngle">Угол наклона</param>
-    /// <param name="selectGem">Выбранный кристалл</param>
+    /// <param name="swipeAngle">РЈРіРѕР» РЅР°РєР»РѕРЅР°</param>
+    /// <param name="selectGem">Р’С‹Р±СЂР°РЅРЅС‹Р№ РєСЂРёСЃС‚Р°Р»Р»</param>
     public void MovePieces(float swipeAngle, Gem selectGem)
     {
         previousPos = posIndex = selectGem.posIndex;
@@ -161,15 +164,15 @@ public class Board : MonoBehaviour
     }
 
     /// <summary>
-    /// Проверить перемещение кристаллов
+    /// РџСЂРѕРІРµСЂРёС‚СЊ РїРµСЂРµРјРµС‰РµРЅРёРµ РєСЂРёСЃС‚Р°Р»Р»РѕРІ
     /// </summary>
-    /// <param name="selectGem">Выбранный кристалл</param>
+    /// <param name="selectGem">Р’С‹Р±СЂР°РЅРЅС‹Р№ РєСЂРёСЃС‚Р°Р»Р»</param>
     /// <returns></returns>
     private IEnumerator CheckMove(Gem selectGem)
     {
-        SetState(BoardState.Wait);
+        currentState = BoardState.Wait;
 
-        yield return new WaitForSeconds(.5f);
+        yield return operationDelay;
 
         List<Gem> allMatches = matchFinder.FindAllMatchesAndCheckForBombs();
 
@@ -183,13 +186,13 @@ public class Board : MonoBehaviour
                 SetupGem(posIndex, selectGem);
                 SetupGem(otherGem.posIndex, otherGem);
 
-                yield return new WaitForSeconds(.5f);
+                yield return operationDelay;
 
-                SetState(BoardState.Move);
+                currentState = BoardState.Move;
             }
             else
             {
-                if (isSelectMatches)
+                if (isSelectMatches)                                            // РџРѕРєР°Р·Р°С‚СЊ РІСЃРµ СЃРѕРІРїР°РґРµРЅРёСЏ(С‚РѕР»СЊРєРѕ РґР»СЏ СЂРµР¶РёРјР° С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ, РІ РёРіСЂРµ РЅРµ РЅСѓР¶РЅРѕ)
                 {
                     SelectAllMatches(allMatches);
                     yield return new WaitForSeconds(3f);
@@ -201,9 +204,9 @@ public class Board : MonoBehaviour
     }
 
     /// <summary>
-    /// Предварительно(перед уничтожением) показать все совпадения(только для режима тестирования, в игре не нужно)
+    /// РџСЂРµРґРІР°СЂРёС‚РµР»СЊРЅРѕ(РїРµСЂРµРґ СѓРЅРёС‡С‚РѕР¶РµРЅРёРµРј) РїРѕРєР°Р·Р°С‚СЊ РІСЃРµ СЃРѕРІРїР°РґРµРЅРёСЏ(С‚РѕР»СЊРєРѕ РґР»СЏ СЂРµР¶РёРјР° С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ, РІ РёРіСЂРµ РЅРµ РЅСѓР¶РЅРѕ)
     /// </summary>
-    /// <param name="allMatches">все совпадения</param>
+    /// <param name="allMatches">РІСЃРµ СЃРѕРІРїР°РґРµРЅРёСЏ</param>
     private void SelectAllMatches(List<Gem> allMatches)
     {
         foreach (Gem gem in allMatches)
@@ -213,9 +216,9 @@ public class Board : MonoBehaviour
     }
 
     /// <summary>
-    /// Уничтожить все совпадения
+    /// РЈРЅРёС‡С‚РѕР¶РёС‚СЊ РІСЃРµ СЃРѕРІРїР°РґРµРЅРёСЏ
     /// </summary>
-    /// <param name="allMatches">все совпадения</param>
+    /// <param name="allMatches">РІСЃРµ СЃРѕРІРїР°РґРµРЅРёСЏ</param>
     private void DestroyAllMatches(List<Gem> allMatches)
     {
         for (int i = 0; i < allMatches.Count; i++)
@@ -226,11 +229,11 @@ public class Board : MonoBehaviour
             }
         }
 
-        StartCoroutine(DecreaseRowCo());
+        StartCoroutine(DecreaseRow());
     }
 
     /// <summary>
-    /// Уничтожьте кристалл в заданной позиции
+    /// РЈРЅРёС‡С‚РѕР¶СЊС‚Рµ РєСЂРёСЃС‚Р°Р»Р» РІ Р·Р°РґР°РЅРЅРѕР№ РїРѕР·РёС†РёРё
     /// </summary>
     /// <param name="pos"></param>
     private void DestroyMatchedGemAt(Vector2Int pos)
@@ -242,20 +245,25 @@ public class Board : MonoBehaviour
                 countBomb--;
             }
 
-            Destroy(allGems[pos.x, pos.y].gameObject);
+            //Destroy(allGems[pos.x, pos.y].gameObject);
+            allGems[pos.x, pos.y].RemoveGem();
             allGems[pos.x, pos.y] = null;
         }
     }
 
-    private IEnumerator DecreaseRowCo()
+    /// <summary>
+    /// РЎРЅРёР¶РµРЅРёРµ РїРѕ СЂСЏРґР°Рј(РіРґРµ РµСЃС‚СЊ РїСѓСЃС‚РѕС‚С‹)
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator DecreaseRow()
     {
-        yield return new WaitForSeconds(.2f);
+        yield return smallDelay;
 
-        int nullCounter = 0;
-
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < width; x++)                                                 // РїСЂРѕС…РѕРґ РїРѕ РІСЃРµРј СЃС‚РѕР»Р±С†Р°Рј
         {
-            for (int y = 0; y < height; y++)
+            int nullCounter = 0;                                                        // СЃС‡РµС‚С‡РёРє РїСѓСЃС‚РѕС‚С‹
+
+            for (int y = 0; y < height; y++)                                            // РїСЂРѕС…РѕРґ РїРѕ С‚РµРєСѓС‰РµРјСѓ СЃС‚РѕР»Р±С†Сѓ
             {
                 if (allGems[x, y] == null)
                 {
@@ -263,33 +271,35 @@ public class Board : MonoBehaviour
                 }
                 else if (nullCounter > 0)
                 {
-                    allGems[x, y].posIndex.y -= nullCounter;
-                    allGems[x, y].SetupMovePosition(allGems[x, y].posIndex);            // запускаем движение кристалла
-                    allGems[x, y - nullCounter] = allGems[x, y];
-                    allGems[x, y] = null;
+                    allGems[x, y].posIndex.y -= nullCounter;                            // СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РЅРѕРІСѓСЋ РїРѕР·РёС†РёСЋ РєСЂРёСЃС‚Р°Р»Р»Р°
+                    allGems[x, y].SetupMovePosition(allGems[x, y].posIndex);            // Р·Р°РїСѓСЃРєР°РµРј РґРІРёР¶РµРЅРёРµ РєСЂРёСЃС‚Р°Р»Р»Р°
+                    allGems[x, y - nullCounter] = allGems[x, y];                        // РїСЂРёСЃРІР°РёРІР°РµРј С‚РµРєСѓС‰РµРјСѓ РєСЂРёСЃС‚Р°Р»Р»Сѓ РЅРѕРІРѕРµ РїРѕР»РѕР¶РµРЅРёРµ РІ С‚Р°Р±Р»РёС†Рµ 
+                    allGems[x, y] = null;                                               // РѕС‡РёС‰Р°РµРј С‚РµРєСѓС‰РµРµ РїРѕР»РѕР¶РµРЅРёРµ РІ С‚Р°Р±Р»РёС†Рµ
                 }
             }
-
-            nullCounter = 0;
         }
 
-        StartCoroutine(FillBoardCo());
+        StartCoroutine(FillBoard());
     }
 
-    private IEnumerator FillBoardCo()
+    /// <summary>
+    /// Р—Р°РїРѕР»РЅРµРЅРёРµ Рё РєРѕРЅС‚СЂРѕР»СЊ РґРѕСЃРєРё
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator FillBoard()
     {
-        yield return new WaitForSeconds(.5f);
+        yield return operationDelay;
         RefillBoard();
 
-        yield return new WaitForSeconds(.5f);
+        yield return operationDelay;
 
         List<Gem> allMatches = matchFinder.FindAllMatchesAndCheckForBombs();
 
         if (allMatches.Count > 0)
         {
-            yield return new WaitForSeconds(.5f);
+            yield return operationDelay;
 
-            if (isSelectMatches)
+            if (isSelectMatches)                                                        // РџРѕРєР°Р·Р°С‚СЊ РІСЃРµ СЃРѕРІРїР°РґРµРЅРёСЏ(С‚РѕР»СЊРєРѕ РґР»СЏ СЂРµР¶РёРјР° С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ, РІ РёРіСЂРµ РЅРµ РЅСѓР¶РЅРѕ)
             {
                 SelectAllMatches(allMatches);
                 yield return new WaitForSeconds(3f);
@@ -299,11 +309,14 @@ public class Board : MonoBehaviour
         }
         else
         {
-            yield return new WaitForSeconds(.5f);
+            yield return operationDelay;
             currentState = BoardState.Move;
         }
     }
 
+    /// <summary>
+    /// РџРѕРїРѕР»РЅРµРЅРёРµ РґРѕСЃРєРё
+    /// </summary>
     private void RefillBoard()
     {
         for (int x = 0; x < width; x++)
@@ -321,7 +334,7 @@ public class Board : MonoBehaviour
     }
 
     /// <summary>
-    /// Настройка кристалла и задание позиции перемещения
+    /// РќР°СЃС‚СЂРѕР№РєР° РєСЂРёСЃС‚Р°Р»Р»Р° Рё Р·Р°РґР°РЅРёРµ РїРѕР·РёС†РёРё РїРµСЂРµРјРµС‰РµРЅРёСЏ
     /// </summary>
     /// <param name="pos"></param>
     /// <param name="gem"></param>
@@ -329,10 +342,5 @@ public class Board : MonoBehaviour
     {
         allGems[pos.x, pos.y] = gem;
         gem.SetupMovePosition(pos);
-    }
-
-    private void SetState(BoardState state)
-    {
-        currentState = state;
     }
 }
