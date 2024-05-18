@@ -5049,6 +5049,6 @@ MonoBehaviour:
   gemSprite: {fileID: 8272004957908645405}
   particleController: {fileID: 4518714467491586778}
   type: 5
-  scoreValue: 10
+  scoreValue: 100
   posIndex: {x: 0, y: 0}
   blastSize: 2
