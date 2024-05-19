@@ -11,6 +11,7 @@ namespace Controllers
     {
         [SerializeField] private Board board;
         [SerializeField] private UIManager uiMan;
+        [SerializeField] private GameObject menuBackground;
         [SerializeField] private float roundTime = 60f;
         [SerializeField] private float scoreSpeed = 5f;
 
@@ -24,6 +25,7 @@ namespace Controllers
         {
             board.OnAddScore += Board_OnAddScore;
             board.OnAddTimeBonus += Board_OnAddTimeBonus;
+            menuBackground.SetActive(true);
         }
 
         private void OnDisable()
@@ -61,11 +63,13 @@ namespace Controllers
             uiMan.SetScore(displayScore);
             currentTime = roundTime;
             board.StartGame();
+            menuBackground.SetActive(false);
             StartCoroutine(CheckGameOver());
         }
 
         public void ExitGame()
         {
+            menuBackground.SetActive(true);
             board.ExitGame();
         }
 
