@@ -36,7 +36,10 @@ namespace Gems
 
         private void OnMouseDown()
         {
-            OnClick?.Invoke(this);
+            if (Time.timeScale > 0)
+            {
+                OnClick?.Invoke(this);
+            }
         }
 
         /// <summary>
