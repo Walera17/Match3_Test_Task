@@ -11,6 +11,7 @@ namespace BoardCode
     {
         public event UnityAction<int> OnAddScore;
         public event UnityAction OnAddTimeBonus;
+        public static event UnityAction<GemType> OnAudioEffect; 
 
         [SerializeField] private int width;
         [SerializeField] private int height;
@@ -265,6 +266,7 @@ namespace BoardCode
                 }
 
                 Gem gem = allGems[pos.x, pos.y];
+                OnAudioEffect?.Invoke(gem.Type);
                 AddScore(gem.ScoreValue);
                 gem.RemoveGem();
                 allGems[pos.x, pos.y] = null;

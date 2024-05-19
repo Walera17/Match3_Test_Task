@@ -4,11 +4,15 @@ using BoardCode;
 using Commons;
 using UI;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Controllers
 {
     public class RoundController : MonoBehaviour
     {
+        public static event UnityAction OnLevelCompleted;
+        public static event UnityAction<bool> OnActiveMenu;
+
         [SerializeField] private Board board;
         [SerializeField] private UIManager uiMan;
         [SerializeField] private GameObject menuBackground;
@@ -25,13 +29,18 @@ namespace Controllers
         {
             board.OnAddScore += Board_OnAddScore;
             board.OnAddTimeBonus += Board_OnAddTimeBonus;
-            menuBackground.SetActive(true);
         }
 
         private void OnDisable()
         {
             board.OnAddScore -= Board_OnAddScore;
             board.OnAddTimeBonus -= Board_OnAddTimeBonus;
+        }
+
+        private void Start()
+        {
+            menuBackground.SetActive(true);
+            OnActiveMenu?.Invoke(true);
         }
 
         void Update()
@@ -64,12 +73,14 @@ namespace Controllers
             currentTime = roundTime;
             board.StartGame();
             menuBackground.SetActive(false);
+            OnActiveMenu?.Invoke(false);
             StartCoroutine(CheckGameOver());
         }
 
         public void ExitGame()
         {
             menuBackground.SetActive(true);
+            OnActiveMenu?.Invoke(true);
             board.ExitGame();
         }
 
@@ -106,7 +117,7 @@ namespace Controllers
 
             uiMan.SetRecord(PlayerPrefs.GetInt("Score", 0));
 
-            //SFXManager.instance.PlayRoundOver();
+            OnLevelCompleted?.Invoke();
         }
 
         private void Board_OnAddScore(int score)
@@ -116,6 +127,7 @@ namespace Controllers
 
         private void Board_OnAddTimeBonus()
         {
+            endingRound = false;
             currentTime += roundTime / 4;
         }
     }
