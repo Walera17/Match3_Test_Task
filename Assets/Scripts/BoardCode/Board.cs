@@ -426,6 +426,7 @@ namespace BoardCode
         public void ExitGame()
         {
             currentState = BoardState.Wait;
+            StopAllCoroutines();
             background.SetActive(false);
 
             for (int i = parentSpawn.childCount - 1; i >= 0; i--)
