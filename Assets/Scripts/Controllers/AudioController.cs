@@ -10,9 +10,6 @@ namespace Controllers
         [SerializeField] AudioSource gemAudioSource;
         [SerializeField] AudioSource bombAudioSource;
         [SerializeField] AudioSource stoneAudioSource;
-        [SerializeField] private AudioClip bombClip;
-        [SerializeField] private AudioClip stoneClip;
-        [SerializeField] private AudioClip gemClip;
         [SerializeField] private AudioClip levelCompleteClip;
         [SerializeField] private AudioClip mainMenuClip;
         [SerializeField] private AudioClip[] levelClips;
@@ -54,25 +51,13 @@ namespace Controllers
                 case GemType.Red:
                 case GemType.Yellow:
                 case GemType.Purple:
-                    if (!gemAudioSource.isPlaying)
-                    {
-                        gemAudioSource.clip = gemClip;
-                        gemAudioSource.Play();
-                    }
+                    gemAudioSource.Play();
                     break;
                 case GemType.Bomb:
-                    if (!bombAudioSource.isPlaying)
-                    {
-                        bombAudioSource.clip = bombClip;
-                        bombAudioSource.Play();
-                    }
+                    bombAudioSource.Play();
                     break;
                 case GemType.Stone:
-                    if (!stoneAudioSource.isPlaying)
-                    {
-                        stoneAudioSource.clip = stoneClip;
-                        stoneAudioSource.Play();
-                    }
+                    stoneAudioSource.Play();
                     break;
             }
         }
