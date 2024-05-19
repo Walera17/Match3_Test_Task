@@ -68,6 +68,7 @@ namespace Controllers
 
         public void StartGame()
         {
+            endingRound = false;
             displayScore = currentScore = 0;
             uiMan.SetScore(displayScore);
             currentTime = roundTime;

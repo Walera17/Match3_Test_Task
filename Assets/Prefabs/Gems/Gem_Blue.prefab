@@ -4902,6 +4902,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   burstSystem: {fileID: 2866188147601276123}
+  gem: {fileID: 206015783775474176}
 --- !u!1 &9144942842045113534
 GameObject:
   m_ObjectHideFlags: 0

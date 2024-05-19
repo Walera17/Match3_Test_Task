@@ -11937,6 +11937,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 383d8424da88e2f4c996e12ffdf7f16d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  poolingController: {fileID: 2104086768}
   width: 9
   height: 9
   background: {fileID: 58548007}
@@ -29287,7 +29288,7 @@ MonoBehaviour:
   board: {fileID: 523613907}
   uiMan: {fileID: 1369927580}
   menuBackground: {fileID: 200780167}
-  roundTime: 25
+  roundTime: 5
   scoreSpeed: 5
 --- !u!4 &1687505564
 Transform:
@@ -30365,6 +30366,72 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2096484476}
   m_CullTransparentMesh: 1
+--- !u!1 &2104086767
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2104086769}
+  - component: {fileID: 2104086768}
+  m_Layer: 0
+  m_Name: PoolingController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2104086768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104086767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbf9f3246aec1b9409a53409926dde3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poolingDates:
+  - prefab: {fileID: 206015783775474176, guid: 545325c23468dfa4ba17303a9c3a11f0, type: 3}
+    defaultCapacity: 20
+    maxSize: 30
+  - prefab: {fileID: 1541757820574310421, guid: 573f98f2e01df80419032afa08dbe599, type: 3}
+    defaultCapacity: 20
+    maxSize: 30
+  - prefab: {fileID: 1541757820574310421, guid: 65b8ef93797302a4b98e55d628859e54, type: 3}
+    defaultCapacity: 20
+    maxSize: 30
+  - prefab: {fileID: 1541757820574310421, guid: ed7b738b21062234b9892ef7a9ec2c7a, type: 3}
+    defaultCapacity: 20
+    maxSize: 30
+  - prefab: {fileID: 1541757820574310421, guid: 5929bd4d2fe30a44e9d7ca92fd7df738, type: 3}
+    defaultCapacity: 20
+    maxSize: 30
+  - prefab: {fileID: 1541757820574310421, guid: 5227ec4e99c3e6f45bb6d3e7275be550, type: 3}
+    defaultCapacity: 20
+    maxSize: 30
+  - prefab: {fileID: 6862615652554460612, guid: 6253d4ddd07e51e4cb0795ec004b10c4, type: 3}
+    defaultCapacity: 2
+    maxSize: 5
+--- !u!4 &2104086769
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104086767}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -30378,3 +30445,4 @@ SceneRoots:
   - {fileID: 523613908}
   - {fileID: 1810016911}
   - {fileID: 959049382}
+  - {fileID: 2104086769}

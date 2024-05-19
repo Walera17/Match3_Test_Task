@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Commons;
+using Controllers;
 using Gems;
 using UnityEngine;
 using UnityEngine.Events;
@@ -11,8 +12,9 @@ namespace BoardCode
     {
         public event UnityAction<int> OnAddScore;
         public event UnityAction OnAddTimeBonus;
-        public static event UnityAction<GemType> OnAudioEffect; 
+        public static event UnityAction<GemType> OnAudioEffect;
 
+        [SerializeField] private PoolingController poolingController;
         [SerializeField] private int width;
         [SerializeField] private int height;
         [SerializeField] private GameObject background;
@@ -109,7 +111,9 @@ namespace BoardCode
                 countBomb++;
             }
 
-            Gem gem = Instantiate(gemToSpawn, new Vector3(pos.x, pos.y + height, 0f), Quaternion.identity, parentSpawn);
+            //Gem gem = Instantiate(gemToSpawn, new Vector3(pos.x, pos.y + height, 0f), Quaternion.identity, parentSpawn);
+            Gem gem = poolingController.Get(gemToSpawn.Type);//, new Vector3(pos.x, pos.y + height, 0f), Quaternion.identity, parentSpawn);
+            gem.transform.position = new Vector3(pos.x, pos.y + height, 0f);
             gem.name = "Gem - " + pos.x + ", " + pos.y;
 
             SetupGem(pos, gem);
@@ -432,6 +436,12 @@ namespace BoardCode
             for (int i = parentSpawn.childCount - 1; i >= 0; i--)
             {
                 Destroy(parentSpawn.GetChild(i).gameObject);
+            }
+
+            Gem[] findGems = FindObjectsOfType<Gem>();
+            foreach (Gem gem in findGems)
+            {
+                poolingController.Release(gem);
             }
         }
     }
