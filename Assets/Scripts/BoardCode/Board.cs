@@ -18,8 +18,6 @@ namespace BoardCode
         [SerializeField] private int width;
         [SerializeField] private int height;
         [SerializeField] private GameObject background;
-        [SerializeField] private Transform parentSpawn;
-        [SerializeField] private GameObject bgTilePrefab;
         [SerializeField] private Gem[] gems;
         [SerializeField, Tooltip("Скорость перемещения кристаллов")] private float gemSpeed;
         [Header("Bomb"), SerializeField] private Gem bomb;
@@ -69,7 +67,9 @@ namespace BoardCode
             {
                 for (int y = 0; y < height; y++)
                 {
-                    GameObject bgTile = Instantiate(bgTilePrefab, new Vector3(x, y, 0), Quaternion.identity, parentSpawn);
+                    //GameObject bgTile = Instantiate(bgTilePrefab, new Vector3(x, y, 0), Quaternion.identity, parentSpawn);
+                    PollElement bgTile = poolingController.Get(GemType.Tile);
+                    bgTile.transform.position = new Vector3(x, y, 0);
                     bgTile.name = "BG Tile - " + x + ", " + y;
 
                     GenerateStartGem(x, y);
@@ -84,6 +84,7 @@ namespace BoardCode
         /// <param name="y"></param>
         private void GenerateStartGem(int x, int y)
         {
+            
             int gemToUse = Random.Range(0, gems.Length);
 
             int iterations = 0;
@@ -112,7 +113,7 @@ namespace BoardCode
             }
 
             //Gem gem = Instantiate(gemToSpawn, new Vector3(pos.x, pos.y + height, 0f), Quaternion.identity, parentSpawn);
-            Gem gem = poolingController.Get(gemToSpawn.Type);//, new Vector3(pos.x, pos.y + height, 0f), Quaternion.identity, parentSpawn);
+            Gem gem = (Gem)poolingController.Get(gemToSpawn.Type);//, new Vector3(pos.x, pos.y + height, 0f), Quaternion.identity, parentSpawn);
             gem.transform.position = new Vector3(pos.x, pos.y + height, 0f);
             gem.name = "Gem - " + pos.x + ", " + pos.y;
 
@@ -433,15 +434,9 @@ namespace BoardCode
             StopAllCoroutines();
             background.SetActive(false);
 
-            for (int i = parentSpawn.childCount - 1; i >= 0; i--)
+            foreach (PollElement pollElement in FindObjectsOfType<PollElement>())
             {
-                Destroy(parentSpawn.GetChild(i).gameObject);
-            }
-
-            Gem[] findGems = FindObjectsOfType<Gem>();
-            foreach (Gem gem in findGems)
-            {
-                poolingController.Release(gem);
+                poolingController.Release(pollElement);
             }
         }
     }

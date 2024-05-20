@@ -10,7 +10,7 @@ namespace Controllers
     [Serializable]
     public class PoolingData
     {
-        public Gem prefab;
+        public PollElement prefab;
         public int defaultCapacity;
         public int maxSize;
     }
@@ -18,7 +18,7 @@ namespace Controllers
     public class PoolingController : MonoBehaviour
     {
         [SerializeField] PoolingData[] poolingDates;
-        private readonly Dictionary<GemType, ObjectPool<Gem>> poolItems = new();
+        private readonly Dictionary<GemType, ObjectPool<PollElement>> poolItems = new();
 
         private void Awake()
         {
@@ -43,25 +43,29 @@ namespace Controllers
             Release(gem);
         }
 
-        public Gem Get(GemType type)
+        public PollElement Get(GemType type)
         {
-            if (poolItems.TryGetValue(type, out ObjectPool<Gem> pool))
+            if (poolItems.TryGetValue(type, out ObjectPool<PollElement> pool))
+            {
                 return pool.Get();
+            }
 
             return null;
         }
 
-        public void Release(Gem gem)
+        public void Release(PollElement pollElement)
         {
-            if (poolItems.ContainsKey(gem.Type))
-                poolItems[gem.Type].Release(gem);
+            if (poolItems.ContainsKey(pollElement.Type))
+            {
+                poolItems[pollElement.Type].Release(pollElement);
+            }
         }
 
-        void CreatePooling(Gem prefab, int defaultCapacity, int maxSize)
+        void CreatePooling(PollElement prefab, int defaultCapacity, int maxSize)
         {
             Transform poolTransform = CreatePoolPatent(prefab.Type + "Pool");
 
-            ObjectPool<Gem> pool = new ObjectPool<Gem>(() => Instantiate(prefab, poolTransform),
+            ObjectPool<PollElement> pool = new ObjectPool<PollElement>(() => Instantiate(prefab, poolTransform),
                 t => t.gameObject.SetActive(true), t => t.gameObject.SetActive(false), t => Destroy(t.gameObject),
                 false, defaultCapacity, maxSize);
 

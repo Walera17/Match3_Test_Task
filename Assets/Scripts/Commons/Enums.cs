@@ -11,7 +11,8 @@
         Yellow,
         Purple,
         Bomb,
-        Stone
+        Stone,
+        Tile
     }
 
     /// <summary>

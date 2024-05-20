@@ -14,7 +14,6 @@ namespace Controllers
         private void OnParticleSystemStopped()
         {
             OnGemDestroy?.Invoke(gem);
-            //transform.parent.gameObject.SetActive(false);
         }
 
         public void CreateBurst()

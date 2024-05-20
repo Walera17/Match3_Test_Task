@@ -1,23 +1,19 @@
 ﻿using BoardCode;
-using Commons;
 using Controllers;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Gems
 {
-    public class Gem : MonoBehaviour
+    public class Gem : PollElement
     {
-        public static event UnityAction<Gem> OnClick;                           // событие при клике на любом кристалле(передает параметром текущий кристалл)
+        public static event UnityAction<Gem> OnClick;               // событие при клике на любом кристалле(передает параметром текущий кристалл)
 
         [SerializeField] protected SpriteRenderer gemSprite;
         [SerializeField] private ParticleController particleController;
-        [SerializeField] protected GemType type;
         [SerializeField] protected int scoreValue = 10;
 
         [HideInInspector] public Vector2Int posIndex;
-
-        public GemType Type => type;
 
         public int ScoreValue => scoreValue;
 
@@ -69,7 +65,7 @@ namespace Gems
                 isMove = false;
             }
         }
-        
+
         public void RemoveGem()
         {
             DisableView();
