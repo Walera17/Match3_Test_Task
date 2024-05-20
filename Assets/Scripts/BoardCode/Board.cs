@@ -67,7 +67,6 @@ namespace BoardCode
             {
                 for (int y = 0; y < height; y++)
                 {
-                    //GameObject bgTile = Instantiate(bgTilePrefab, new Vector3(x, y, 0), Quaternion.identity, parentSpawn);
                     PollElement bgTile = poolingController.Get(GemType.Tile);
                     bgTile.transform.position = new Vector3(x, y, 0);
                     bgTile.name = "BG Tile - " + x + ", " + y;
@@ -112,8 +111,7 @@ namespace BoardCode
                 countBomb++;
             }
 
-            //Gem gem = Instantiate(gemToSpawn, new Vector3(pos.x, pos.y + height, 0f), Quaternion.identity, parentSpawn);
-            Gem gem = (Gem)poolingController.Get(gemToSpawn.Type);//, new Vector3(pos.x, pos.y + height, 0f), Quaternion.identity, parentSpawn);
+            Gem gem = (Gem)poolingController.Get(gemToSpawn.Type);
             gem.transform.position = new Vector3(pos.x, pos.y + height, 0f);
             gem.name = "Gem - " + pos.x + ", " + pos.y;
 
