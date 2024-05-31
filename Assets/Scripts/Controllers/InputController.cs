@@ -52,9 +52,8 @@ namespace Controllers
         private void CalculateAngle(Vector2 finalTouchPosition)
         {
             float swipeAngle = Mathf.Atan2(finalTouchPosition.y - firstTouchPosition.y, finalTouchPosition.x - firstTouchPosition.x);
-            swipeAngle = swipeAngle * 180 / Mathf.PI;                                                                                   // Угол наклона
 
-            board.MovePieces(swipeAngle, selectGem);
+            board.MovePieces(swipeAngle * Mathf.Rad2Deg, selectGem);
         }
 
         private void Gem_OnClick(Gem gem)
